@@ -1,0 +1,42 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - BUILD_ENV=production
+    environment:
+      - JAVA_OPTS=-Xms512m -Xmx2g -XX:+UseG1GC -XX:MaxGCPauseMillis=200
+      - DB_HOST=${PROD_DB_HOST}
+      - DB_PORT=${PROD_DB_PORT:-5432}
+      - DB_NAME=${PROD_DB_NAME}
+      - DB_USER=${PROD_DB_USER}
+      - DB_PASSWORD=${PROD_DB_PASSWORD}
+    ports:
+      - "8080:8080"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 3G
+        reservations:
+          cpus: '1'
+          memory: 2G
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "5"
+
+  db:
+    environment:
+      POSTGRES_USER: ${PROD_DB_USER}
+      POSTGRES_PASSWORD: ${PROD_DB_PASSWORD}
+      POSTGRES_DB: ${PROD_DB_NAME}
+    volumes:
+      - /data/postgres:/var/lib/postgresql/data
+    logging:
+      driver: json-file
+      options:
+        max-size: "100m"
+        max-file: "5"

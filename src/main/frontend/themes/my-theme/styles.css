@@ -1,0 +1,15 @@
+/* 
+ * Frontend Theme Styles
+ * 
+ * NOTE: This file is required by Vaadin's Vite build process.
+ * The actual brand-specific styles are loaded from:
+ * - src/main/resources/META-INF/resources/styles.css (Lumo theme)
+ * - src/main/resources/META-INF/resources/styles-aura.css (Aura theme)
+ * 
+ * This minimal file serves as a placeholder for the Vite build system.
+ * All custom styling should be added to:
+ * - src/main/resources/META-INF/resources/styles/ (CSS files)
+ * - Component-specific @StyleSheet annotations in Java
+ */
+
+/* Placeholder - actual styles are in src/main/resources/META-INF/resources/ */

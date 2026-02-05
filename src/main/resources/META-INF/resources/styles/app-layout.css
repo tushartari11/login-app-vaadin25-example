@@ -1,0 +1,255 @@
+/**
+ * =============================================================================
+ * APP LAYOUT STYLESHEET
+ * =============================================================================
+ *
+ * Styles for the main application layout components:
+ * - Header: Navigation bar with logo, theme selector, logout
+ * - Content Area: Main content section with background image
+ * - Footer: Copyright and company information
+ *
+ * WCAG 2.1 AAA compliant with proper contrast ratios.
+ *
+ * =============================================================================
+ */
+
+/* =============================================================================
+   ROOT LAYOUT CONTAINER
+   ============================================================================= */
+
+.app-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--lumo-base-color);
+}
+
+/* =============================================================================
+   HEADER STYLES
+   ============================================================================= */
+
+.app-header {
+    background: linear-gradient(135deg, var(--lumo-primary-color) 0%, var(--brand-teal-100) 100%);
+    box-shadow: 0 4px 8px var(--lumo-shade-20pct);
+    z-index: 100;
+}
+
+.app-header__logo-section {
+    display: flex;
+    align-items: center;
+    gap: var(--lumo-space-m);
+    flex-shrink: 0;
+}
+
+.app-header__logo {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: var(--lumo-border-radius-m);
+    color: var(--lumo-primary-contrast-color);
+    font-weight: bold;
+    font-size: var(--lumo-font-size-m);
+    box-shadow: 0 2px 4px var(--lumo-shade-20pct);
+}
+
+.app-header__company-name {
+    margin: 0;
+    padding: 0;
+    color: var(--lumo-primary-contrast-color);
+    font-size: var(--lumo-font-size-lg);
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.app-header__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--lumo-space-m);
+    flex-shrink: 0;
+}
+
+/* Theme selector styling */
+.app-header__theme-selector {
+    color: var(--lumo-primary-contrast-color);
+}
+
+.app-header__theme-selector vaadin-radio-button {
+    color: var(--lumo-primary-contrast-color);
+}
+
+.app-header__theme-selector vaadin-radio-button::part(label) {
+    color: var(--lumo-primary-contrast-color);
+}
+
+/* Logout button styling */
+.app-header__logout-button {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: var(--lumo-primary-contrast-color);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.2s ease;
+}
+
+.app-header__logout-button:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 2px 6px var(--lumo-shade-30pct);
+}
+
+.app-header__logout-button:active {
+    background-color: rgba(255, 255, 255, 0.35);
+}
+
+/* =============================================================================
+   CONTENT AREA STYLES
+   ============================================================================= */
+
+.app-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    background-image: url('../images/background-main.svg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+}
+
+/* Optional: Add overlay for better content readability */
+.app-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.05);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.app-content>* {
+    position: relative;
+    z-index: 1;
+}
+
+/* Scrollbar styling for better appearance with background image */
+.app-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.app-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.app-content::-webkit-scrollbar-thumb {
+    background: var(--lumo-primary-color);
+    border-radius: 4px;
+}
+
+.app-content::-webkit-scrollbar-thumb:hover {
+    background: var(--brand-teal-100);
+}
+
+/* =============================================================================
+   FOOTER STYLES
+   ============================================================================= */
+
+.app-footer {
+    background-color: var(--lumo-base-color);
+    border-top: 1px solid var(--lumo-divider-color);
+    padding: var(--lumo-space-m);
+    text-align: center;
+    color: var(--lumo-secondary-text-color);
+    font-size: var(--lumo-font-size-s);
+    margin-top: auto;
+    flex-shrink: 0;
+}
+
+.app-footer__copyright {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.app-footer__company-link {
+    color: var(--lumo-primary-color);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.app-footer__company-link:hover {
+    color: var(--brand-teal-100);
+    text-decoration: underline;
+}
+
+/* =============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================= */
+
+@media (max-width: 768px) {
+    .app-header {
+        padding: var(--lumo-space-s) var(--lumo-space-m);
+    }
+
+    .app-header__logo-section {
+        gap: var(--lumo-space-s);
+    }
+
+    .app-header__logo {
+        width: 40px;
+        height: 40px;
+        font-size: var(--lumo-font-size-s);
+    }
+
+    .app-header__company-name {
+        font-size: var(--lumo-font-size-m);
+    }
+
+    .app-header__actions {
+        gap: var(--lumo-space-s);
+    }
+
+    .app-content {
+        padding: var(--lumo-space-s);
+    }
+
+    .app-footer {
+        padding: var(--lumo-space-s);
+        font-size: var(--lumo-font-size-xs);
+    }
+
+    .app-footer__copyright {
+        gap: 2px;
+    }
+}
+
+@media (max-width: 480px) {
+    .app-header {
+        flex-wrap: wrap;
+    }
+
+    .app-header__actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .app-header__company-name {
+        display: none;
+    }
+}
+
+/* =============================================================================
+   DARK MODE SUPPORT (if using SYSTEM color scheme)
+   ============================================================================= */
+
+@media (prefers-color-scheme: dark) {
+    .app-footer__copyright {
+        color: var(--lumo-body-text-color);
+    }
+}

@@ -1,0 +1,9 @@
+target/
+node_modules/
+.idea/
+.vscode/
+*.iml
+.git/
+.gitignore
+*.md
+frontend/generated/
