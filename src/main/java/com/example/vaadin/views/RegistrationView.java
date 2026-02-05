@@ -1,6 +1,5 @@
 package com.example.vaadin.views;
 
-import com.example.vaadin.security.SecurityService;
 import com.example.vaadin.services.RegistrationService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -31,19 +30,14 @@ import jakarta.inject.Inject;
  * User registration view with validation and WCAG 2.1 AAA compliance.
  * Provides accessible form fields, error handling, and keyboard navigation.
  */
-@Route("register")
+@Route(value = "register", layout = MainLayout.class)
 @PageTitle("Register | Vaadin App")
 @AnonymousAllowed
 @StyleSheet("./styles/registration-view.css")
-public class RegistrationView extends AppLayout {
+public class RegistrationView extends VerticalLayout {
 
     @Inject
     private RegistrationService registrationService;
-
-    @Inject
-    public RegistrationView(SecurityService securityService) {
-        super(securityService);
-    }
 
     private TextField usernameField;
     private EmailField emailField;
@@ -69,7 +63,6 @@ public class RegistrationView extends AppLayout {
         setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
         setSizeFull();
-        addClassName(LumoUtility.Background.CONTRAST_5);
     }
 
     private void createHeader() {

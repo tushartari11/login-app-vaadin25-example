@@ -1,7 +1,6 @@
 package com.example.vaadin.views;
 
 import com.example.vaadin.entities.User;
-import com.example.vaadin.security.SecurityService;
 import com.example.vaadin.services.UserService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -26,21 +25,16 @@ import java.time.format.DateTimeFormatter;
  * Only accessible to users with ADMIN role.
  * WCAG 2.1 AAA compliant.
  */
-@Route("admin")
+@Route(value = "admin", layout = MainLayout.class)
 @PageTitle("Admin Panel | Vaadin App")
 @RolesAllowed("ADMIN")
 @StyleSheet("./styles/admin-view.css")
-public class AdminView extends AppLayout {
+public class AdminView extends VerticalLayout {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     @Inject
     private UserService userService;
-
-    @Inject
-    public AdminView(SecurityService securityService) {
-        super(securityService);
-    }
 
     private Grid<User> userGrid;
 

@@ -3,8 +3,10 @@ package com.example.vaadin.views;
 import com.example.vaadin.application.theme.ThemeSwitcher;
 import com.example.vaadin.security.SecurityService;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Footer;
@@ -16,23 +18,31 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
+import com.vaadin.flow.component.HasElement;
+import com.vaadin.flow.router.AfterNavigationEvent;
+import com.vaadin.flow.router.AfterNavigationObserver;
+import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import jakarta.inject.Inject;
 
 /**
- * Main application layout with header, content area, and footer.
+ * Main application layout implementing RouterLayout for SPA behavior.
+ * The router automatically swaps view content into the contentArea
+ * while header and footer remain persistent.
  * WCAG 2.1 AAA compliant with proper contrast ratios.
  * Styles are defined in app-layout.css
  */
 @StyleSheet("./styles/app-layout.css")
 @StyleSheet("./styles/notifications.css")
-public class AppLayout extends VerticalLayout {
+public class MainLayout extends VerticalLayout implements RouterLayout, AfterNavigationObserver {
 
     private final SecurityService securityService;
     private final VerticalLayout contentArea;
+    private Button loginButton;
+    private HorizontalLayout userMenuTarget;
 
     @Inject
-    public AppLayout(SecurityService securityService) {
+    public MainLayout(SecurityService securityService) {
         this.securityService = securityService;
         this.contentArea = new VerticalLayout();
 
@@ -99,7 +109,8 @@ public class AppLayout extends VerticalLayout {
     }
 
     /**
-     * Creates the action section with theme selector and logout button.
+     * Creates the action section with theme selector, login button (anonymous),
+     * and user avatar with context menu (authenticated).
      */
     private HorizontalLayout createActionSection() {
         HorizontalLayout actionSection = new HorizontalLayout();
@@ -107,25 +118,44 @@ public class AppLayout extends VerticalLayout {
         actionSection.setAlignItems(FlexComponent.Alignment.CENTER);
         actionSection.addClassName("app-header__actions");
 
-        // Theme selector
+        // Theme selector — Lumo selected by default
         RadioButtonGroup<ThemeSwitcher.Theme> themeGroup = new RadioButtonGroup<>();
         themeGroup.setItems(ThemeSwitcher.Theme.values());
         themeGroup.setItemLabelGenerator(ThemeSwitcher.Theme::getDisplayName);
-        themeGroup.setValue(ThemeSwitcher.getCurrentTheme());
-        themeGroup.setLabel("Theme");
         themeGroup.addClassName("app-header__theme-selector");
-        themeGroup.addValueChangeListener(event -> {
-            ThemeSwitcher.switchTheme(event.getValue());
-            Notification.show("Theme changed to " + event.getValue().getDisplayName(), 2000,
-                    Notification.Position.TOP_CENTER);
-        });
+        themeGroup.addValueChangeListener(event ->
+                ThemeSwitcher.switchTheme(event.getValue()));
+        themeGroup.setValue(ThemeSwitcher.getCurrentTheme());
 
-        // Logout button
-        Button logoutButton = new Button("Logout", event -> handleLogout());
-        logoutButton.addClassName("app-header__logout-button");
-        logoutButton.setAriaLabel("Log out of your account");
+        // Login button — shown when NOT authenticated
+        this.loginButton = new Button("Login", event -> UI.getCurrent().navigate("login"));
+        this.loginButton.addClassName("app-header__logout-button");
+        this.loginButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        this.loginButton.setAriaLabel("Navigate to login page");
 
-        actionSection.add(themeGroup, logoutButton);
+        // User avatar with dropdown — shown when authenticated
+        this.userMenuTarget = new HorizontalLayout();
+        this.userMenuTarget.setSpacing(true);
+        this.userMenuTarget.setAlignItems(FlexComponent.Alignment.CENTER);
+        this.userMenuTarget.addClassName("app-header__user-menu");
+        this.userMenuTarget.getStyle().set("cursor", "pointer");
+
+        String username = securityService.getAuthenticatedUsername().orElse("");
+        Avatar avatar = new Avatar(username);
+        avatar.addClassName("app-header__avatar");
+
+        Span usernameLabel = new Span(username);
+        usernameLabel.addClassName("app-header__username");
+
+        this.userMenuTarget.add(avatar, usernameLabel);
+
+        ContextMenu userMenu = new ContextMenu(this.userMenuTarget);
+        userMenu.setOpenOnClick(true);
+        userMenu.addItem("Profile", event -> { /* future: navigate to profile */ });
+        userMenu.addItem("Settings", event -> { /* future: navigate to settings */ });
+        userMenu.addItem("Logout", event -> handleLogout());
+
+        actionSection.add(themeGroup, loginButton, userMenuTarget);
         return actionSection;
     }
 
@@ -168,18 +198,32 @@ public class AppLayout extends VerticalLayout {
     }
 
     /**
-     * Adds content to the main content area.
+     * Called by Vaadin's router to place the routed view inside the content area.
+     * This is what makes the SPA behavior work — only contentArea swaps on navigation.
      */
-    public void setContent(com.vaadin.flow.component.Component... components) {
+    @Override
+    public void showRouterLayoutContent(HasElement content) {
         contentArea.removeAll();
-        contentArea.add(components);
+        contentArea.getElement().appendChild(content.getElement());
     }
 
     /**
-     * Gets the security service for use by child components.
+     * Toggles header action visibility based on authentication state.
+     * Called by Vaadin after each route navigation.
      */
-    public SecurityService getSecurityService() {
-        return securityService;
+    @Override
+    public void afterNavigation(AfterNavigationEvent event) {
+        boolean authenticated = securityService.isAuthenticated();
+        loginButton.setVisible(!authenticated);
+        userMenuTarget.setVisible(authenticated);
+
+        if (authenticated) {
+            String username = securityService.getAuthenticatedUsername().orElse("");
+            Avatar avatar = (Avatar) userMenuTarget.getComponentAt(0);
+            Span usernameLabel = (Span) userMenuTarget.getComponentAt(1);
+            avatar.setName(username);
+            usernameLabel.setText(username);
+        }
     }
 
     /**
@@ -188,6 +232,6 @@ public class AppLayout extends VerticalLayout {
     private void handleLogout() {
         securityService.logout();
         Notification.show("You have been logged out", 2000, Notification.Position.TOP_CENTER);
-        UI.getCurrent().navigate(LoginView.class);
+        UI.getCurrent().navigate("login");
     }
 }

@@ -26,19 +26,14 @@ import jakarta.inject.Inject;
  * WCAG 2.1 AAA compliant: accessible labels, keyboard navigation,
  * error messages, and high contrast.
  */
-@Route("login")
+@Route(value = "login", layout = MainLayout.class)
 @PageTitle("Login | Vaadin App")
 @AnonymousAllowed
 @StyleSheet("./styles/login-view.css")
-public class LoginView extends AppLayout {
+public class LoginView extends VerticalLayout {
 
     @Inject
     private SecurityService securityService;
-
-    @Inject
-    public LoginView(SecurityService securityService) {
-        super(securityService);
-    }
 
     private TextField usernameField;
     private PasswordField passwordField;
@@ -64,8 +59,6 @@ public class LoginView extends AppLayout {
         setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
         setSizeFull();
-
-        addClassName(LumoUtility.Background.CONTRAST_5);
     }
 
     private void createHeader() {
