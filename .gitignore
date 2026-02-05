@@ -21,7 +21,7 @@ buildNumber.properties
 
 # Vaadin
 node_modules/
-frontend/generated/
+src/main/frontend/generated/
 pnpm-lock.yaml
 package-lock.json
 webpack.generated.js
