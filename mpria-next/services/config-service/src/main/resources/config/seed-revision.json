@@ -1,0 +1,122 @@
+{
+  "revisionId": "rev-1",
+  "publishedAt": "2026-08-01T10:15:30Z",
+  "recordTypes": [
+    {
+      "recordType": "object",
+      "schemaVersion": 1,
+      "titleFieldId": "title",
+      "fields": [
+        {
+          "id": "inventoryNumber",
+          "type": "STRING",
+          "label": "config.field.inventoryNumber",
+          "required": true,
+          "maxLength": 50,
+          "allowedValues": []
+        },
+        {
+          "id": "title",
+          "type": "STRING",
+          "label": "config.field.title",
+          "required": true,
+          "maxLength": 255,
+          "allowedValues": []
+        },
+        {
+          "id": "description",
+          "type": "TEXT",
+          "label": "config.field.description",
+          "required": false,
+          "maxLength": null,
+          "allowedValues": []
+        },
+        {
+          "id": "acquiredOn",
+          "type": "DATE",
+          "label": "config.field.acquiredOn",
+          "required": false,
+          "maxLength": null,
+          "allowedValues": []
+        },
+        {
+          "id": "condition",
+          "type": "ENUM",
+          "label": "config.field.condition",
+          "required": false,
+          "maxLength": null,
+          "allowedValues": ["GOOD", "FAIR", "POOR"]
+        }
+      ]
+    }
+  ],
+  "screens": [
+    {
+      "screenId": "object-detail",
+      "recordType": "object",
+      "layout": {
+        "screenId": "object-detail",
+        "recordType": "object",
+        "regions": [
+          {
+            "kind": "REGION",
+            "id": "main",
+            "grid": { "columns": { "base": 1, "md": 6, "xl": 12 }, "gap": "md" },
+            "children": [
+              {
+                "kind": "GROUP",
+                "id": "grp-identification",
+                "label": "config.group.identification",
+                "collapsible": true,
+                "span": { "base": 1, "md": 6, "xl": 8 },
+                "grid": { "columns": { "base": 1, "md": 2 }, "gap": "md" },
+                "children": [
+                  {
+                    "kind": "SLOT",
+                    "id": "slot-inv",
+                    "span": { "base": 1 },
+                    "component": { "type": "TEXT_FIELD", "fieldId": "inventoryNumber", "options": {} }
+                  },
+                  {
+                    "kind": "SLOT",
+                    "id": "slot-title",
+                    "span": { "base": 1 },
+                    "component": { "type": "TEXT_FIELD", "fieldId": "title", "options": {} }
+                  },
+                  {
+                    "kind": "SLOT",
+                    "id": "slot-desc",
+                    "span": { "base": 1, "md": 2 },
+                    "component": { "type": "RICH_TEXT", "fieldId": "description", "options": {} }
+                  }
+                ]
+              },
+              {
+                "kind": "GROUP",
+                "id": "grp-acquisition",
+                "label": "config.group.acquisition",
+                "collapsible": false,
+                "span": { "base": 1, "md": 6, "xl": 4 },
+                "grid": { "columns": { "base": 1 }, "gap": "md" },
+                "children": [
+                  {
+                    "kind": "SLOT",
+                    "id": "slot-acquired",
+                    "span": { "base": 1 },
+                    "component": { "type": "DATE_PICKER", "fieldId": "acquiredOn", "options": {} }
+                  },
+                  {
+                    "kind": "SLOT",
+                    "id": "slot-condition",
+                    "span": { "base": 1 },
+                    "component": { "type": "SELECT", "fieldId": "condition", "options": {} }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+# Local scrape configuration.
+#
+# Two paths on purpose: the collector's Prometheus exporter for anything arriving over OTLP, and
+# each service's actuator endpoint directly. The direct scrape is what keeps JVM and HTTP server
+# metrics available even when the collector is down — the moment you most want them.
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    environment: local
+
+scrape_configs:
+  - job_name: otel-collector
+    static_configs:
+      - targets: ["otel-collector:8889"]
+
+  - job_name: mpria-services
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets:
+          - "catalog-service:8081"
+          - "config-service:8082"
+          - "presentation-bff:8080"
+        labels:
+          tier: application
+    # Services run on the host during normal development; the container targets above only
+    # resolve under `--profile apps`. Unreachable targets show as `down`, which is correct and
+    # visible rather than silently absent.
+
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]

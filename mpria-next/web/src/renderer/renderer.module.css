@@ -1,0 +1,287 @@
+/*
+ * The layout engine. Two mechanisms only:
+ *
+ *   1. Viewport media queries, one per named breakpoint above `base`, choosing between custom
+ *      properties that the renderer has already resolved through the cascade. Nothing here reads a
+ *      window size in JavaScript, so server-rendered HTML is laid out correctly on first paint.
+ *   2. Container queries for component internals, so a field in a narrow side panel stacks while
+ *      an identical field in a wide main region does not — at the same viewport width.
+ *
+ * Grid owns the two-dimensional form canvas; flex owns one-dimensional internals. There is no
+ * absolute positioning anywhere, which is the whole point of replacing the v8 raster layout.
+ */
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mp-space-lg);
+}
+
+/* ---- the two-dimensional canvas ------------------------------------------------------------ */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--mp-cols-base), minmax(0, 1fr));
+  gap: var(--mp-grid-gap, var(--mp-space-md));
+  align-items: start;
+}
+
+/*
+ * Every grid item. `min-width: 0` stops a long unbroken value from forcing a track wider than its
+ * share; `container-type` makes the cell the reference for the component internals below.
+ */
+.cell {
+  grid-column: span var(--mp-span-base);
+  min-width: 0;
+  container-type: inline-size;
+  container-name: mp-cell;
+}
+
+@media (min-width: 40rem) {
+  .grid {
+    grid-template-columns: repeat(var(--mp-cols-sm), minmax(0, 1fr));
+  }
+
+  .cell {
+    grid-column: span var(--mp-span-sm);
+  }
+}
+
+@media (min-width: 48rem) {
+  .grid {
+    grid-template-columns: repeat(var(--mp-cols-md), minmax(0, 1fr));
+  }
+
+  .cell {
+    grid-column: span var(--mp-span-md);
+  }
+}
+
+@media (min-width: 64rem) {
+  .grid {
+    grid-template-columns: repeat(var(--mp-cols-lg), minmax(0, 1fr));
+  }
+
+  .cell {
+    grid-column: span var(--mp-span-lg);
+  }
+}
+
+@media (min-width: 80rem) {
+  .grid {
+    grid-template-columns: repeat(var(--mp-cols-xl), minmax(0, 1fr));
+  }
+
+  .cell {
+    grid-column: span var(--mp-span-xl);
+  }
+}
+
+/* ---- groups -------------------------------------------------------------------------------- */
+
+.group {
+  border: 1px solid var(--mp-colour-border);
+  border-radius: var(--mp-radius-md);
+  background: var(--mp-colour-surface);
+  padding: var(--mp-space-md);
+}
+
+.groupLabel,
+.groupSummary {
+  margin: 0 0 var(--mp-space-sm);
+  font-size: var(--mp-type-sm);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--mp-colour-text-muted);
+}
+
+.groupSummary {
+  cursor: pointer;
+}
+
+.groupSummary:focus-visible {
+  outline: 2px solid var(--mp-colour-focus);
+  outline-offset: 2px;
+}
+
+/* ---- one field ----------------------------------------------------------------------------- */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mp-space-2xs);
+}
+
+.fieldLabel {
+  font-size: var(--mp-type-sm);
+  font-weight: 500;
+  color: var(--mp-colour-text-muted);
+}
+
+.fieldControl {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mp-space-2xs);
+  min-width: 0;
+}
+
+/*
+ * The container query, and the reason raster positioning had to go: the same configured field
+ * renders stacked in a narrow cell and side-by-side in a wide one, decided by the cell rather than
+ * by the window.
+ */
+@container mp-cell (min-width: 30rem) {
+  .field {
+    flex-direction: row;
+    align-items: first baseline;
+    column-gap: var(--mp-space-md);
+  }
+
+  .fieldLabel {
+    flex: 0 0 11rem;
+    padding-top: var(--mp-space-2xs);
+  }
+
+  .fieldControl {
+    flex: 1 1 auto;
+  }
+}
+
+.requiredMark {
+  margin-inline-start: 0.15em;
+  color: var(--mp-colour-danger);
+}
+
+.control {
+  width: 100%;
+  min-width: 0;
+  padding: var(--mp-space-xs) var(--mp-space-sm);
+  border: 1px solid var(--mp-colour-border);
+  border-radius: var(--mp-radius-sm);
+  background: var(--mp-colour-input);
+  color: inherit;
+  font: inherit;
+}
+
+.control:focus-visible {
+  outline: 2px solid var(--mp-colour-focus);
+  outline-offset: 1px;
+}
+
+.control[aria-invalid='true'] {
+  border-color: var(--mp-colour-danger);
+}
+
+.control[readonly],
+.control:disabled {
+  background: var(--mp-colour-surface-sunken);
+  color: var(--mp-colour-text-muted);
+}
+
+.checkbox {
+  width: auto;
+  align-self: start;
+  accent-color: var(--mp-colour-accent);
+}
+
+.errors {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--mp-space-2xs);
+  color: var(--mp-colour-danger);
+  font-size: var(--mp-type-sm);
+}
+
+/* ---- placeholders and fallbacks ------------------------------------------------------------ */
+
+.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 8rem;
+  padding: var(--mp-space-md);
+  border: 1px dashed var(--mp-colour-border);
+  border-radius: var(--mp-radius-md);
+  color: var(--mp-colour-text-muted);
+  text-align: center;
+}
+
+.fallback {
+  margin: 0;
+  padding: var(--mp-space-sm) var(--mp-space-md);
+  border: 1px dashed var(--mp-colour-danger);
+  border-radius: var(--mp-radius-sm);
+  color: var(--mp-colour-danger);
+  font-size: var(--mp-type-sm);
+}
+
+/* ---- action bar (one-dimensional: flex, not grid) ------------------------------------------- */
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mp-space-sm);
+  border-top: 1px solid var(--mp-colour-border);
+  padding-top: var(--mp-space-md);
+}
+
+.actionBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--mp-space-md);
+}
+
+.actionItem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mp-space-2xs);
+}
+
+.confirmItem {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--mp-space-xs);
+}
+
+.action {
+  padding: var(--mp-space-xs) var(--mp-space-md);
+  border: 1px solid var(--mp-colour-border);
+  border-radius: var(--mp-radius-sm);
+  background: var(--mp-colour-surface);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.action:focus-visible {
+  outline: 2px solid var(--mp-colour-focus);
+  outline-offset: 2px;
+}
+
+.action[aria-disabled='true'] {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.actionPrimary {
+  border-color: var(--mp-colour-accent);
+  background: var(--mp-colour-accent);
+  color: var(--mp-colour-accent-contrast);
+}
+
+.actionReason {
+  font-size: var(--mp-type-sm);
+  color: var(--mp-colour-text-muted);
+}
+
+.status {
+  margin: 0;
+  min-height: 1.25rem;
+  font-size: var(--mp-type-sm);
+  color: var(--mp-colour-text-muted);
+}

@@ -1,0 +1,21 @@
+# Local-development image for a Spring Boot service.
+#
+# Deliberately simple and deliberately NOT the production build. Production images are produced by
+# jib from the Maven build: distroless, reproducible, non-root, no Dockerfile to drift
+# (ARCHITECTURE.md §13). This file exists so `docker compose --profile apps up` works from an
+# already-built jar without a second toolchain.
+#
+# Requires `mvn package` to have run first.
+
+FROM eclipse-temurin:21-jre-alpine
+
+RUN addgroup -S mpria && adduser -S mpria -G mpria
+USER mpria:mpria
+
+WORKDIR /app
+COPY --chown=mpria:mpria target/*.jar app.jar
+
+# Container-aware heap sizing; the JVM reads the cgroup limit rather than the host's memory.
+ENV JAVA_OPTS="-XX:MaxRAMPercentage=75 -XX:+UseZGC -XX:+ZGenerational"
+
+ENTRYPOINT ["sh", "-c", "exec java $JAVA_OPTS -jar app.jar"]

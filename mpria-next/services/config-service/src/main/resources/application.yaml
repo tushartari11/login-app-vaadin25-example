@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: config-service
+
+  # No datasource. The Phase-0 configuration is seeded from config/seed-revision.json into an
+  # in-memory store; Phase 2 adds this service's own PostgreSQL schema and Flyway migrations.
+  # See services/config-service/README.md.
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${OIDC_ISSUER_URI:http://localhost:8180/realms/mpria}
+
+  threads:
+    virtual:
+      # Java 21 virtual threads: the admin console's autosave traffic stays readable without a
+      # reactive rewrite (ADR-0001).
+      enabled: true
+
+server:
+  port: ${SERVER_PORT:8082}
+  shutdown: graceful
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
+
+logging:
+  level:
+    com.zetcom.mpria: INFO
