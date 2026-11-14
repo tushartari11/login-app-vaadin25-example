@@ -1,5 +1,6 @@
 # Authentication System Deployment Guide
-## Vaadin 25 / Jakarta EE 10 / PostgreSQL / Payara 7
+
+## Vaadin 25 / Jakarta EE 11 / PostgreSQL / Payara 7
 
 This guide provides step-by-step instructions for deploying and testing the authentication system using Docker Compose.
 
@@ -526,7 +527,7 @@ docker-compose up --build           # Fresh start
 
 - **Docker Compose:** https://docs.docker.com/compose/
 - **Payara Server:** https://docs.payara.fish/
-- **Jakarta EE 10:** https://jakarta.ee/specifications/platform/10/
+- **Jakarta EE 11:** https://jakarta.ee/specifications/platform/11/
 - **Vaadin 25:** https://vaadin.com/docs/latest/
 - **PostgreSQL:** https://www.postgresql.org/docs/
 

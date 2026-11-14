@@ -1,9 +1,11 @@
-target/
-node_modules/
+**/target/
+**/node_modules/
 .idea/
 .vscode/
 *.iml
 .git/
 .gitignore
 *.md
-frontend/generated/
+**/src/main/frontend/generated/
+docs/
+screenshots/

@@ -1,0 +1,127 @@
+/**
+ * =============================================================================
+ * REGISTRATION VIEW STYLESHEET
+ * =============================================================================
+ *
+ * Styles specific to the registration view
+ * WCAG 2.1 AAA compliant
+ *
+ * =============================================================================
+ */
+
+.registration-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  padding: var(--lumo-space-xl);
+  gap: var(--lumo-space-l);
+}
+
+.registration-form {
+  background: var(--lumo-base-color);
+  border-radius: var(--lumo-border-radius-l);
+  padding: var(--lumo-space-xl);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+  border: 1px solid var(--lumo-contrast-10pct);
+}
+
+.registration-form h1 {
+  text-align: center;
+  margin-bottom: var(--lumo-space-l);
+  color: var(--lumo-primary-text-color);
+}
+
+.registration-form vaadin-text-field,
+.registration-form vaadin-email-field,
+.registration-form vaadin-password-field {
+  width: 100%;
+  margin-bottom: var(--lumo-space-m);
+}
+
+.registration-form vaadin-button {
+  width: 100%;
+  margin-top: var(--lumo-space-l);
+}
+
+.registration-error {
+  color: #d32f2f;
+  text-align: center;
+  margin: var(--lumo-space-m) 0;
+  font-weight: 500;
+}
+
+.registration-links {
+  text-align: center;
+  margin-top: var(--lumo-space-l);
+}
+
+.registration-links a,
+.registration-links vaadin-router-link {
+  color: var(--lumo-primary-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.registration-links a:hover,
+.registration-links vaadin-router-link:hover {
+  text-decoration: underline;
+}
+
+.password-strength-indicator {
+  display: flex;
+  gap: var(--lumo-space-s);
+  margin-top: var(--lumo-space-s);
+  align-items: center;
+}
+
+.password-strength-bar {
+  flex: 1;
+  height: 4px;
+  background-color: var(--lumo-contrast-10pct);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.password-strength-fill {
+  height: 100%;
+  background-color: #d32f2f;
+  width: 0%;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.password-strength-fill.weak {
+  width: 33%;
+  background-color: #d32f2f;
+}
+
+.password-strength-fill.medium {
+  width: 66%;
+  background-color: #f57c00;
+}
+
+.password-strength-fill.strong {
+  width: 100%;
+  background-color: var(--brand-teal-500);
+}
+
+.password-strength-text {
+  font-size: var(--lumo-font-size-xs);
+  font-weight: 500;
+  min-width: 60px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lumo-space-xs);
+}
+
+.form-group label {
+  font-weight: 500;
+  color: var(--lumo-primary-text-color);
+  font-size: var(--lumo-font-size-s);
+}

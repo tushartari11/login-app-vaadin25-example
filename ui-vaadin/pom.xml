@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  UI (Vaadin) - the deployable WAR for Payara 7.
+
+  Compile classpath : application API only (use cases + DTOs) + Vaadin.
+  Runtime classpath : + domain + infrastructure, so CDI can wire the adapters.
+
+  => A view that imports a domain entity or a DAO does NOT COMPILE.
+  To swap the UI framework, add e.g. ui-rest or ui-spring with the same three
+  dependencies and delete this module; domain/application/infrastructure stay untouched.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.example</groupId>
+    <artifactId>vaadin-payara-app-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>vaadin-payara-app-ui</artifactId>
+  <packaging>war</packaging>
+  <name>App :: UI :: Vaadin</name>
+
+  <dependencies>
+    <!-- Use cases + DTOs. The domain is excluded from the compile classpath on purpose. -->
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>app-application</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>app-domain</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <!-- Needed at runtime only: never visible to view code -->
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>app-domain</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>app-infrastructure</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <!-- Vaadin (versions from vaadin-bom) -->
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-cdi</artifactId>
+    </dependency>
+
+    <!-- Servlet 6.1 / CDI 4.1 - provided by Payara 7 -->
+    <dependency>
+      <groupId>jakarta.platform</groupId>
+      <artifactId>jakarta.jakartaee-api</artifactId>
+    </dependency>
+
+    <!-- Logging: Payara logs through java.util.logging, so bind SLF4J to JUL -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-jdk14</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.tngtech.archunit</groupId>
+      <artifactId>archunit-junit5</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>${project.artifactId}</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+          <!--
+            In a WAR the container only serves META-INF/resources from jars in WEB-INF/lib,
+            not from WEB-INF/classes, so copy the stylesheets and images to the WAR root.
+          -->
+          <webResources>
+            <resource>
+              <directory>src/main/resources/META-INF/resources</directory>
+              <targetPath>/</targetPath>
+            </resource>
+          </webResources>
+        </configuration>
+      </plugin>
+
+      <!-- Development mode: prepare only; Vaadin serves the frontend in dev mode -->
+      <plugin>
+        <groupId>com.vaadin</groupId>
+        <artifactId>vaadin-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-frontend</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <!--
+      Vaadin 25: vaadin-core no longer pulls in vaadin-dev (24.x did), so dev mode needs it explicitly.
+      activeByDefault => switched off automatically whenever -Pproduction is given,
+      so production WARs never contain the dev server / dev tools.
+    -->
+    <profile>
+      <id>development</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>com.vaadin</groupId>
+          <artifactId>vaadin-dev</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+
+    <!-- mvn clean package -Pproduction -->
+    <profile>
+      <id>production</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>frontend</id>
+                <phase>compile</phase>
+                <goals>
+                  <goal>prepare-frontend</goal>
+                  <goal>build-frontend</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+  <!--
+    No Vaadin Directory add-ons are used, so the vaadin-addons repository is omitted.
+    Re-add https://maven.vaadin.com/vaadin-addons if you introduce one.
+  -->
+</project>

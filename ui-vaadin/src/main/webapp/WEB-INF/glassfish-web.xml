@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE glassfish-web-app PUBLIC
+  "-//GlassFish.org//DTD GlassFish Application Server 3.1 Servlet 3.0//EN"
+  "http://glassfish.org/dtds/glassfish-web-app_3_0-1.dtd">
+<!--
+  Payara does not map groups to roles by default. DatabaseIdentityStore returns the user's Role
+  as a group, so map every group to the role with the same name (declared in web.xml).
+-->
+<glassfish-web-app>
+  <security-role-mapping>
+    <role-name>GUEST</role-name>
+    <group-name>GUEST</group-name>
+  </security-role-mapping>
+  <security-role-mapping>
+    <role-name>USER</role-name>
+    <group-name>USER</group-name>
+  </security-role-mapping>
+  <security-role-mapping>
+    <role-name>MANAGER</role-name>
+    <group-name>MANAGER</group-name>
+  </security-role-mapping>
+  <security-role-mapping>
+    <role-name>ADMIN</role-name>
+    <group-name>ADMIN</group-name>
+  </security-role-mapping>
+</glassfish-web-app>

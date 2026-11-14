@@ -1,0 +1,75 @@
+/**
+ * =============================================================================
+ * LOGIN VIEW STYLESHEET
+ * =============================================================================
+ *
+ * Styles specific to the login view
+ * WCAG 2.1 AAA compliant
+ *
+ * =============================================================================
+ */
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  padding: var(--lumo-space-xl);
+  gap: var(--lumo-space-l);
+}
+
+.login-form {
+  background: var(--lumo-base-color);
+  border-radius: var(--lumo-border-radius-l);
+  padding: var(--lumo-space-xl);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  border: 1px solid var(--lumo-contrast-10pct);
+}
+
+.login-form h1 {
+  text-align: center;
+  margin-bottom: var(--lumo-space-l);
+  color: var(--lumo-primary-text-color);
+}
+
+.login-form vaadin-text-field,
+.login-form vaadin-password-field {
+  width: 100%;
+  margin-bottom: var(--lumo-space-m);
+}
+
+.login-form vaadin-button {
+  width: 100%;
+  margin-top: var(--lumo-space-l);
+}
+
+.login-error {
+  color: #d32f2f;
+  text-align: center;
+  margin: var(--lumo-space-m) 0;
+  font-weight: 500;
+}
+
+.login-links {
+  text-align: center;
+  margin-top: var(--lumo-space-l);
+  display: flex;
+  gap: var(--lumo-space-m);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.login-links a,
+.login-links vaadin-router-link {
+  color: var(--lumo-primary-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-links a:hover,
+.login-links vaadin-router-link:hover {
+  text-decoration: underline;
+}

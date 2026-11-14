@@ -4,7 +4,9 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        - MAVEN_PROFILE=${MAVEN_PROFILE:-development}
+        # "production" = precompiled frontend bundle. The image has no Node.js and no mounted sources,
+        # so Vaadin dev mode (MAVEN_PROFILE=development) is meant for running from the IDE instead.
+        - MAVEN_PROFILE=${MAVEN_PROFILE:-production}
     container_name: vaadin-payara-app
     depends_on:
       db:
