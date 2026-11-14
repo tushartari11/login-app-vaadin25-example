@@ -21,13 +21,14 @@ buildNumber.properties
 
 # Vaadin
 node_modules/
-src/main/frontend/generated/
+**/src/main/frontend/generated/
 pnpm-lock.yaml
 package-lock.json
 webpack.generated.js
 
 # Payara
 payara6/
+payara7/
 glassfish/
 
 # Logs

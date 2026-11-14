@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  INFRASTRUCTURE: adapters that implement the domain ports.
+    * persistence : JPA @Entity classes (separate from domain entities), mappers,
+                    repository implementations / DAOs (or Jakarta Data repositories on Payara 7)
+    * security    : PasswordHasher adapter (bcrypt)
+    * config      : CDI producers that are specific to this runtime
+  JPA/EclipseLink, CDI and JTA come from Payara 7 (provided).
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.example</groupId>
+    <artifactId>vaadin-payara-app-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>app-infrastructure</artifactId>
+  <packaging>jar</packaging>
+  <name>App :: Infrastructure</name>
+
+  <dependencies>
+    <!-- Implements domain ports; may also implement application-level ports -->
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>app-domain</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>app-application</artifactId>
+    </dependency>
+
+    <!-- JPA 3.2, CDI 4.1, JTA, Jakarta Data 1.0 - provided by Payara 7 -->
+    <dependency>
+      <groupId>jakarta.platform</groupId>
+      <artifactId>jakarta.jakartaee-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+
+    <!-- Maintained replacement for org.mindrot:jbcrypt 0.4 -->
+    <dependency>
+      <groupId>at.favre.lib</groupId>
+      <artifactId>bcrypt</artifactId>
+    </dependency>
+
+    <!--
+      No PostgreSQL driver here: the JDBC pool is created in Payara
+      (payara-post-boot.asadmin) and the driver lives in
+      <payara>/glassfish/domains/domain1/lib (see Dockerfile).
+      Add org.postgresql:postgresql (runtime) only if you switch to @DataSourceDefinition.
+    -->
+  </dependencies>
+</project>

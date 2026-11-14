@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  APPLICATION: use cases (application services), commands, queries and DTOs.
+  This module's public API is the ONLY thing a UI may call. It must never
+  return domain entities to the UI; map them to DTOs/records here.
+
+  Only two tiny, portable annotation APIs are allowed:
+    * jakarta.inject       (@Inject)        - honoured by CDI, Spring and Quarkus
+    * jakarta.transaction  (@Transactional) - honoured by CDI/Payara, Spring and Quarkus
+  Both are 'provided', so the application jar stays framework-neutral.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.example</groupId>
+    <artifactId>vaadin-payara-app-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>app-application</artifactId>
+  <packaging>jar</packaging>
+  <name>App :: Application</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>app-domain</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>jakarta.inject</groupId>
+      <artifactId>jakarta.inject-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.transaction</groupId>
+      <artifactId>jakarta.transaction-api</artifactId>
+    </dependency>
+  </dependencies>
+</project>
